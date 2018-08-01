@@ -1,0 +1,23 @@
+rhel:
+  - realmd 
+  - bind-utils 
+  - oddjob
+  - oddjob-mkhomedir 
+  - sssd 
+  - adcli
+  - samba-common-tools
+  - openldap-clients
+  - krb5-workstation
+
+ubuntu:
+  - realmd 
+  - sssd 
+  - adcli
+  - samba-common-bin
+  - libnss-sss
+  - sssd-tools
+  - krb5-user
+  - libpam-sss
+  - packagekit
+
+

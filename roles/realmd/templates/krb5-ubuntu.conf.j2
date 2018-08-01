@@ -1,0 +1,5 @@
+#{{ ansible_managed }}
+
+[libdefaults]
+ default_realm = {{ krb5_default_realm }}
+ default_ccache_name = KEYRING:persistent:%{uid}

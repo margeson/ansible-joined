@@ -1,0 +1,5 @@
+Usage
+copy config.yml.sample to config.yml and update the vars
+add ssh key of the user you are logged in as in which the ansible command will run as
+
+`ansible-playbook join.yml -i hosts -e 'ansible_ssh_user=ec2-user'`

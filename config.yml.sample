@@ -1,0 +1,16 @@
+---
+# Encrypt this with ansible-vault
+kerberos_user: 
+kerberos_user_password: 
+
+krb5_default_realm: ONPREM.LOCAL
+lowercase_realm_domain: onprem.local
+shortname: ONPREM
+ldapBase: "dc=onprem,dc=local"
+adServer: dc1
+dnsServer: 172.17.1.120
+dnsSearch: "ec2.internal {{ lowercase_realm_domain }}"
+
+# Set to true to lock AD auth to a specific group
+realmACL: False
+realmPermitADGroup: ADGroupName

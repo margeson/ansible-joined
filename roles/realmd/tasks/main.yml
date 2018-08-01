@@ -1,0 +1,76 @@
+- name: realmd | apply realmd.conf
+  template: 
+    src: realmd.conf.j2
+    dest: /etc/realmd.conf
+    owner: root
+    group: root
+    mode: 0644
+
+- name: realmd | apply krb.conf for rhel
+  template: 
+    src: krb5-rhel.conf.j2
+    dest: /etc/krb5.conf
+    backup: yes
+    owner: root
+    group: root
+    mode: 0644
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+
+- name: realmd | apply krb.conf for ubuntu
+  template: 
+    src: krb5-ubuntu.conf.j2
+    dest: /etc/krb5.conf
+    backup: yes
+    owner: root
+    group: root
+    mode: 0644
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+- name: realmd | discover realm
+  command: /bin/bash -c "/usr/sbin/realm discover {{ krb5_default_realm }}"
+  register: realm_discover_results
+
+- name: realmd | realm discover results
+  debug: 
+    msg: "{{ realm_discover_results.stdout }}"
+
+- name: realmd | create kerberos ticket
+  expect:
+    command: /bin/bash -c "kinit -V {{ kerberos_user }}"
+    responses:
+      (?i)Password: "{{ kerberos_user_password }}"
+
+- name: "realmd | check if the system is already joined to {{ krb5_default_realm }}"
+  command: /bin/bash -c "/usr/sbin/realm list"
+  register: realm_list_results
+
+- name: realmd | realm list results
+  debug:
+    msg: "{{ realm_list_results.stdout }}"
+
+- name: realmd | join system to domain
+  expect:
+    command: /bin/bash -c '/usr/sbin/realm join "{{ krb5_default_realm }}" --user="{{ kerberos_user }}"'
+    #--automatic-id-mapping=no
+    responses:
+      (?i)Password: "{{ kerberos_user_password }}"
+    timeout: 600
+    echo: yes
+  when: realm_list_results.stdout == ""
+  
+- name: realmd | apply sssd.conf
+  template:
+    src: sssd.conf.j2
+    dest: /etc/sssd/sssd.conf
+    owner: root
+    group: root
+    mode: 0600
+  notify: restart sssd
+
+- name: realmd | restrict domain logins
+  shell: 'realm deny --all'
+  when: realmACL
+
+- name: realmd | allow domain group login
+  shell: 'realm permit --groups {{ realmPermitADGroup }}'
+  when: realmACL

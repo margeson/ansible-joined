@@ -1,0 +1,23 @@
+---
+- name: Join to Active Directory
+  hosts: join-domain
+  become: true
+  become_user: root
+  vars_files:
+    - config.yml
+  
+  # Required for Debian and Ubuntu
+  pre_tasks:
+    - name: 'install python2'
+      raw: sudo apt-get -y install python-simplejson
+      register: chmod_result
+      changed_when: "chmod_result.stdout != \"\""
+      ignore_errors: yes
+
+  roles:
+    - resolv
+    - prereqs
+    - realmd
+    - pam
+    - ssh
+    - sudo

@@ -1,0 +1,13 @@
+- name: sudo | update nsswitch
+  lineinfile:
+    path: /etc/nsswitch.conf
+    regexp: '^sudoers'
+    line: 'sudoers: files sss'
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+
+- name: sudo | add group to sudoers
+  lineinfile:
+    path: /etc/sudoers
+    regexp: '^%DOMAIN'
+    #line: '%DOMAIN\\mdc-fs01-everyone  ALL=(ALL) NOPASSWD: ALL'
+  when: realmACL

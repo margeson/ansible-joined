@@ -1,0 +1,5 @@
+- name: resolv | apply dns config
+  template:
+    src: resolv.conf.j2
+    dest: /etc/resolv.conf
+    backup: yes

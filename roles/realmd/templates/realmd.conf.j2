@@ -1,0 +1,16 @@
+#{{ ansible_managed }}
+
+[active-directory]
+os-name = {{ ansible_distribution }}
+os-version = {{ ansible_distribution_version }}
+
+[service]
+automatic-install = yes
+
+[users]
+default-home = /home/%d/%u
+default-shell = /bin/bash
+
+[mcbadass.local]
+user-principle = yes
+fully-qualified-names = yes

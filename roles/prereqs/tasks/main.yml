@@ -1,0 +1,37 @@
+- name: prereqs | install required packages
+  yum:
+    name: "{{ item }}"
+    state: installed
+  with_items: "{{ rhel }}"
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+
+- name: prereqs | install required packages
+  apt:
+    name: "{{ item }}"
+    state: latest
+    update_cache: yes
+  with_items: "{{ ubuntu }}"
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+- name: prereqs | add epel repo
+  yum: 
+    name: https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm 
+    state: installed
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+
+- name: prereqs | install pip
+  yum:
+    name: python-pip
+    state: installed
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+
+- name: prereqs | install pip
+  apt:
+    name: python-pip
+    state: installed
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+  
+- name: prereqs | install pexpect
+  pip: 
+    name: pexpect
+    state: present 
